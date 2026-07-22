@@ -13,7 +13,7 @@ const __dirname = dirname(__filename);
 
 const AUTH_SECRET = "sailendlc_super_secret_2026";
 const GIST_ID = "1b8eab31dbc77498848ea8996facb9fd";
-const GH_TOKEN = "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";
+const GH_TOKEN = process.env.GH_TOKEN;
 const REGISTER_URL = "https://sailen-dlc.netlify.app/";
 const API_URL = process.env.API_URL || "https://sailen-dlc-loader.onrender.com";
 
