@@ -130,11 +130,22 @@ app.post("/login", async (req, res) => {
 
 app.post("/activate", async (req, res) => {
   try {
-    const { key } = req.body;
+    const { key, username } = req.body;
     if (!key) return res.status(400).json({ error: "Key required" });
+    if (!username) return res.status(400).json({ error: "Username required" });
 
     const result = verifyKey(key);
     if (!result) return res.status(400).json({ error: "Неверный ключ" });
+
+    const users = await readUsers();
+    const user = users.find((u) => u.username === username);
+    if (!user) return res.status(404).json({ error: "User not found" });
+    if (user.premium) {
+      const pe = user.premium.expiresAt;
+      if (!pe || new Date(pe) > new Date()) {
+        return res.status(400).json({ error: "У вас уже активен премиум" });
+      }
+    }
 
     const keysData = await readKeys();
     const keyData = keysData[key];
@@ -144,11 +155,36 @@ app.post("/activate", async (req, res) => {
 
     const used = (keyData?.used || 0) + 1;
     const hwids = keyData?.hwids || [];
-    keysData[key] = { used, maxUses: result.maxUses, hwids };
+    const activatedBy = keyData?.activatedBy || [];
+    if (!activatedBy.includes(username)) activatedBy.push(username);
+    keysData[key] = { used, maxUses: result.maxUses, hwids, activatedBy };
     await writeKeys(keysData);
 
-    const expiresAt = result.days === Infinity ? null : new Date(Date.now() + result.days * 86400000).toISOString();
+    const now = new Date();
+    const expiresAt = result.days === Infinity ? null : new Date(now.getTime() + result.days * 86400000).toISOString();
+    user.premium = { key, type: result.type, activatedAt: now.toISOString(), expiresAt };
+    await writeUsers(users);
+
     res.json({ success: true, type: result.type, expires_at: expiresAt, used, maxUses: result.maxUses });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.post("/user-premium", async (req, res) => {
+  try {
+    const { username } = req.body;
+    if (!username) return res.status(400).json({ error: "Username required" });
+
+    const users = await readUsers();
+    const user = users.find((u) => u.username === username);
+    if (!user) return res.status(404).json({ error: "User not found" });
+
+    if (!user.premium) return res.json({ premium: null });
+    const expired = user.premium.expiresAt && new Date(user.premium.expiresAt) < new Date();
+    if (expired) return res.json({ premium: null, expired: true });
+
+    res.json({ premium: user.premium });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
