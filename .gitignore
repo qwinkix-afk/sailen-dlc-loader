@@ -1,0 +1,17 @@
+node_modules/
+dist/
+release/
+temp_extract/
+*.exe
+*.jar
+*.msi
+*.zip
+*.log
+.env
+.DS_Store
+Thumbs.db
+crash-reports/
+resources/
+resourcepacks/
+saves/
+shaderpacks/

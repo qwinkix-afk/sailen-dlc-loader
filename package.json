@@ -1,0 +1,88 @@
+{
+  "name": "my-launcher",
+  "version": "1.0.0",
+  "private": true,
+  "main": "electron/main.js",
+  "type": "module",
+  "scripts": {
+    "dev": "concurrently \"vite\" \"wait-on tcp:5173 && electron .\"",
+    "build": "vite build",
+    "preview": "vite preview",
+    "start": "electron .",
+    "dist:win": "npm run build && electron-builder --win --x64"
+  },
+  "dependencies": {
+    "cors": "^2.8.6",
+    "express": "^5.2.1",
+    "lucide-react": "^0.469.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-script": "^2.0.5"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.4.1",
+    "autoprefixer": "^10.4.20",
+    "concurrently": "^9.2.1",
+    "electron": "^33.4.11",
+    "electron-builder": "^26.8.1",
+    "postcss": "^8.4.49",
+    "tailwindcss": "^3.4.16",
+    "vite": "^6.0.6",
+    "wait-on": "^8.0.5"
+  },
+  "build": {
+    "appId": "net.husc.launcher",
+    "productName": "SailenDLC",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "dist/**/*",
+      "electron/**/*",
+      "package.json"
+    ],
+    "extraResources": [
+      {
+        "from": "electron/SailenDLC.jar",
+        "to": "SailenDLC.jar"
+      },
+      {
+        "from": "electron/log4j-api-2.17.0.jar",
+        "to": "log4j-api-2.17.0.jar"
+      },
+      {
+        "from": "electron/log4j-core-2.17.0.jar",
+        "to": "log4j-core-2.17.0.jar"
+      },
+      {
+        "from": "electron/java-discord-rpc.jar",
+        "to": "java-discord-rpc.jar"
+      },
+      {
+        "from": "electron/discord-rpc.dll",
+        "to": "discord-rpc.dll"
+      },
+      {
+        "from": "assets",
+        "to": "assets"
+      }
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "portable",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "icon.ico",
+      "signAndEditExecutable": false,
+      "forceCodeSigning": false
+    },
+    "portable": {
+      "artifactName": "SailenDLC-${version}.exe",
+      "requestExecutionLevel": "user"
+    }
+  }
+}

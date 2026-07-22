@@ -1,0 +1,14 @@
+{
+  "name": "sailendlc-auth",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "main": "api.js",
+  "scripts": {
+    "start": "node api.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.21.0"
+  }
+}
