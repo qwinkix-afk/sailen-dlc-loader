@@ -4,7 +4,7 @@ import { createHash, randomBytes } from "node:crypto";
 
 const PORT = process.env.PORT || 3001;
 const GIST_ID = "1b8eab31dbc77498848ea8996facb9fd";
-const GH_TOKEN = "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";
+const GH_TOKEN = "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";
 
 const app = express();
 app.use(cors());
