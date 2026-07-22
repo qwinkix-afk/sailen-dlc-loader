@@ -37,7 +37,7 @@ app.get("/health", (req, res) => {
 
 app.post("/register", async (req, res) => {
   try {
-    const { username, password } = req.body;
+    const { username, email, password } = req.body;
     if (!username || !password) {
       return res.status(400).json({ error: "Username and password required" });
     }
@@ -55,7 +55,7 @@ app.post("/register", async (req, res) => {
 
     const salt = randomBytes(16).toString("hex");
     const passwordHash = createHash("sha256").update(password + salt).digest("hex");
-    users.push({ username, passwordHash, salt });
+    users.push({ username, email: email || "", passwordHash, salt });
     await writeUsers(users);
 
     res.json({ success: true });
